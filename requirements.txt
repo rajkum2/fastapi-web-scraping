@@ -3,3 +3,6 @@ uvicorn[standard]
 requests
 beautifulsoup4
 pytz
+psycopg2-binary
+sqlalchemy
+sql
