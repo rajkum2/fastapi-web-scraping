@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchNews } from '../services/NewService';
 import SearchBar from './SearchBar';
-
+import '../../src/App.css'
 const NewsList = () => {
     const [newsItems, setNewsItems] = useState([]);
     const [filteredItems, setFilteredItems] = useState([]);
@@ -27,15 +27,19 @@ const NewsList = () => {
         );
         setFilteredItems(filtered);
     };
-
+    const handleClear = () => {
+        setFilteredItems(newsItems);
+        setSearchTerm('');
+    };
     return (
         <div>
             <SearchBar 
                 searchTerm={searchTerm} 
                 setSearchTerm={setSearchTerm} 
                 onSearch={handleSearch} 
+                onClear={handleClear} 
             />
-            <table>
+            <table className="news-table">
                 <thead>
                     <tr>
                         <th>ID</th>
