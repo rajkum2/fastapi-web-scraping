@@ -74,3 +74,14 @@ def test_insert():
         return {"error": str(e)}
     finally:
         db.close()
+
+@app.get('/all-news')
+def all_news(page: str = 'world', category: str = 'africa'):
+    db = SessionLocal()
+    try:
+        news_items = db.query(NewsItem).all()
+        return news_items
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        db.close()

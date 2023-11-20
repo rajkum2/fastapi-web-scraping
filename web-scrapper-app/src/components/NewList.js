@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { fetchNews } from '../services/NewService';
+import { fetchNews } from '../services/NewService'; // Make sure the path is correct
 import SearchBar from './SearchBar';
-import '../../src/App.css'
+import '../../src/App.css'; // Ensure this path is correct
+
 const NewsList = () => {
     const [newsItems, setNewsItems] = useState([]);
     const [filteredItems, setFilteredItems] = useState([]);
@@ -10,9 +11,10 @@ const NewsList = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const data = await fetchNews(); // Adjust parameters as needed
-                setNewsItems(data.items || []);
-                setFilteredItems(data.items || []);
+                const data = await fetchNews(); // No need to adjust parameters
+                console.log("Fetched data:", data); // Log the response data
+                setNewsItems(data); // Assuming 'data' is the array of news items
+                setFilteredItems(data); // Set filtered items to the full list initially
             } catch (error) {
                 console.error("Error fetching news:", error);
             }
@@ -23,14 +25,16 @@ const NewsList = () => {
 
     const handleSearch = () => {
         const filtered = newsItems.filter(item =>
-            item.title.toLowerCase().includes(searchTerm.toLowerCase())
+            item.title?.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredItems(filtered);
     };
+
     const handleClear = () => {
         setFilteredItems(newsItems);
         setSearchTerm('');
     };
+
     return (
         <div>
             <SearchBar 
@@ -57,10 +61,10 @@ const NewsList = () => {
                             <td>{item.category}</td>
                             <td>{item.title}</td>
                             <td>
-                                <a href={item.link} target="_blank" rel="noreferrer">Link</a>
+                                {item.link ? <a href={item.link} target="_blank" rel="noreferrer">Link</a> : 'N/A'}
                             </td>
                             <td>
-                                <img src={item.image} alt={item.title} style={{ width: '100px' }} />
+                                {item.image ? <img src={item.image} alt={item.title} style={{ width: '100px' }} /> : 'No Image'}
                             </td>
                             <td>{item.datetime_utc}</td>
                         </tr>
