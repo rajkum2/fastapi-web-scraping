@@ -1,11 +1,23 @@
+from datetime import datetime, timedelta
 from fastapi import FastAPI, HTTPException
 from .database import init_db, SessionLocal
 from .models import NewsItem
 from .scrapper import pages, feeds
+from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
+import logging
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # URL of the React app
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 @app.on_event("startup")
 def startup_event():
     init_db()
@@ -15,21 +27,29 @@ def home_pages(page: str | None = 'world'):
     return data
 
 @app.get('/news')
-def news(page: str | None = 'world', category: str | None = 'africa'):
-    data = feeds(page, category)
+async def news(page: Optional[str] = 'world', category: Optional[str] = 'energy'):
+    try:
+        data = feeds(page, category)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     # Database session
     db = SessionLocal()
     try:
         for item in data["items"]:
-            news_item = NewsItem(
-                id=item['id'],
-                category=item['category'],
-                title=item['title'],
-                link=item['link'],
-                image=item['image'],
-                datetime_utc=item.get('datetime_utc')
-            )
-            db.add(news_item)
+            # Check if the item already exists in the database
+            existing_item = db.query(NewsItem).filter(NewsItem.id == item['id']).first()
+            if existing_item is None:
+                # Item doesn't exist, proceed with adding it
+                news_item = NewsItem(
+                    id=item['id'],
+                    category=item['category'],
+                    title=item['title'],
+                    link=item['link'],
+                    image=item['image'],
+                    datetime_utc=item.get('datetime_utc')
+                )
+                print(news_item.id)
+                db.add(news_item)
         db.commit()
     except Exception as e:
         db.rollback()
@@ -38,3 +58,19 @@ def news(page: str | None = 'world', category: str | None = 'africa'):
         db.close()
     return data
 
+@app.get('/test-insert')
+def test_insert():
+    db = SessionLocal()
+    try:
+        test_item = NewsItem(id='test1234333433', category='test23', title='Test Title', link='http://test.com', image='http://test.com/image.jpg', datetime_utc=datetime.now())
+        db.add(test_item)
+        db.commit()
+
+        logger.info("Test item successfully inserted")  # Log success message
+        return {"message": "Test item successfully inserted"}
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Error inserting test item: {e}")  # Log error message
+        return {"error": str(e)}
+    finally:
+        db.close()
