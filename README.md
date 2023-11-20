@@ -19,3 +19,5 @@ Install and start PostgreSQL:
 brew install postgresql
 brew services start postgresql
 psql postgres
+
+DATABASE_URL = "postgresql://yourusername:yourpassword@localhost/yourdbname"
