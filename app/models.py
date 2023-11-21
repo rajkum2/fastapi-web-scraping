@@ -6,7 +6,6 @@ Base = declarative_base()
 
 class NewsItem(Base):
     __tablename__ = 'news_items'
-
     id = Column(String, primary_key=True)
     category = Column(String)
     title = Column(String)
