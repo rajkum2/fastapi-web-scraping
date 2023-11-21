@@ -6,6 +6,10 @@ from .scrapper import pages, feeds
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 import logging
+from fastapi import FastAPI, HTTPException
+from .models import NewsItem  # or .schemas if using separate schema
+from .content_generator import generate_social_media_post
+from .schemas import NewsItemSchema  # Import the Pydantic schema
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -85,3 +89,12 @@ def all_news(page: str = 'world', category: str = 'africa'):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         db.close()
+
+@app.post("/generate-social-post")
+async def generate_post(news_item: NewsItemSchema):
+    try:
+        generated_post = generate_social_media_post(news_item.title, news_item.category)
+        return {"generated_post": generated_post}
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

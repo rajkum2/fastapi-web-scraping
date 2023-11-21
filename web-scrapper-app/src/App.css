@@ -76,3 +76,18 @@
 .news-table a:hover {
   text-decoration: underline;
 }
+
+
+/* App.css */
+.sidebar {
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+.text-center {
+  text-align: center;
+}
+
+.my-4 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}

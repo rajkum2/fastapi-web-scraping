@@ -1,6 +1,7 @@
 venv
-.env
-.vscode
+app/.env
+temp_auto_push.bat
 .pycharm
 .idea
-__pycache__
+__pycache__.gitignore
+branch_structure.json
