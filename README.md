@@ -6,10 +6,12 @@ This project demonstrates how to scrape data from a web application, store it in
 ## Getting Started
 
 ### Prerequisites
-- Python
+- Python 3.8 or higher
 - PostgreSQL
 - FastAPI
 - ReactJS
+- Node.js and npm
+- An API key from OpenAI
 
 ### Installation
 
